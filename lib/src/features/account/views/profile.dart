@@ -19,6 +19,7 @@ import 'package:job/src/features/account/views/educational_list.dart';
 import 'package:job/src/features/account/views/employment_list.dart';
 import 'package:job/src/features/auth/views/job_preference.dart';
 import 'package:job/src/features/auth/views/proffesional_details.dart';
+import 'package:job/src/features/auth/views/terms_conditions.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class Profile extends StatefulWidget {
@@ -840,7 +841,24 @@ class _ProfileState extends State<Profile> {
                     ),
                   ),
                   const SizedBox(
-                    height: 35,
+                    height: 7,
+                  ),
+                  TextButton(
+                    style: TextButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(horizontal: 5)),
+                    onPressed: () {
+                      Nav.to(
+                        context,
+                        const TermsConditions(),
+                      );
+                    },
+                    child: const Text(
+                      'View Terms and Conditions',
+                      style: TextStyle(fontSize: 12),
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 7,
                   ),
                   SizedBox(
                       width: ScreenWidth,

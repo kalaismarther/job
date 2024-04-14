@@ -5,70 +5,6 @@ import 'package:job/src/core/utils/guestAlert.dart';
 import 'package:job/src/core/utils/local_storage.dart';
 import 'package:job/src/core/utils/navigation.dart';
 import 'package:job/src/features1/subscription/views/subscription_list.dart';
-// class ProviderBottomBar extends StatelessWidget {
-//   final int currentIndex;
-//   final Function(int) onTap;
-
-//   const ProviderBottomBar({
-//     Key? key,
-//     required this.currentIndex,
-//     required this.onTap,
-//   }) : super(key: key);
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return BottomNavigationBar(
-//       type: BottomNavigationBarType.fixed,
-//       currentIndex: currentIndex,
-//       onTap: onTap,
-//       selectedItemColor: AppTheme.primary,
-//       unselectedItemColor: AppTheme.TextBoldLite,
-//       items: [
-//         BottomNavigationBarItem(
-//           icon: ImageIcon(
-//             const AssetImage("assets/icons/Home.png"),
-//           ),
-//           label: "Home",
-//         ),
-//         BottomNavigationBarItem(
-//           icon: ImageIcon(
-//             const AssetImage("assets/icons/Work.png"),
-//           ),
-//           label: "My post",
-//         ),
-//           BottomNavigationBarItem(
-//           icon: Container(
-//             height: 50,
-//             decoration: BoxDecoration(
-//               shape: BoxShape.circle,
-//               color: currentIndex == 2
-//                   ? AppTheme.primary
-//                   : AppTheme.TextFormFieldBac,
-//             ),
-//             child: Icon(
-//               Icons.add,
-//               color: currentIndex == 2 ? AppTheme.white : AppTheme.TextBoldLite,
-//               size: 40, // Adjust the size as needed
-//             ),
-//           ),
-//           label: "", // Empty label to hide text
-//         ),
-//         BottomNavigationBarItem(
-//           icon: ImageIcon(
-//             const AssetImage("assets/icons/Chat.png"),
-//           ),
-//           label: "Request",
-//         ),
-//         BottomNavigationBarItem(
-//           icon: ImageIcon(
-//             const AssetImage("assets/icons/Profile.png"),
-//           ),
-//           label: "Account",
-//         ),
-//       ],
-//     );
-//   }
-// }
 
 class ProviderBottomBar extends StatefulWidget {
   final int currentIndex;
@@ -127,16 +63,12 @@ class _ProviderBottomBarState extends State<ProviderBottomBar> {
     return ConvexAppBar(
       key: appBarKey,
       style: TabStyle.fixedCircle,
-
       color: Colors.black,
       backgroundColor: Colors.white,
-      // shadowColor: Colors.transparent,
       curveSize: 0,
       elevation: 1,
-
       activeColor: AppTheme.primary,
       height: 55,
-      // elevation: ,
       items: [
         TabItem(
             icon: ImageIcon(
@@ -145,11 +77,11 @@ class _ProviderBottomBarState extends State<ProviderBottomBar> {
             ),
             title: "Home"),
         TabItem(
-            icon: ImageIcon(
-              const AssetImage("assets/icons/Work.png"),
-              color: widget.currentIndex == 1 ? AppTheme.primary : null,
+            icon: Icon(
+              Icons.library_add_check_outlined,
+              color: widget.currentIndex == 1 ? AppTheme.primary : Colors.black,
             ),
-            title: "My post"),
+            title: "My Plans"),
         TabItem(
             icon: Container(
               height: 50,
@@ -183,6 +115,7 @@ class _ProviderBottomBarState extends State<ProviderBottomBar> {
       ],
       initialActiveIndex: widget.currentIndex,
       onTap: (int i) {
+        print(i);
         var result = PrefManager.read("guest");
         // PrefManager.writebool("home_load", false);
         bool get_HomeLoad = PrefManager.readBoolean("home_load");

@@ -3,6 +3,7 @@ import 'package:job/src/core/utils/logoutAlert.dart';
 import 'package:job/src/core/utils/navigation.dart';
 import 'package:job/src/features/auth/views/terms_conditions.dart';
 import 'package:job/src/features/chat/views/chat.dart';
+import 'package:job/src/features1/createpost/views/my_post.dart';
 import 'package:job/src/features1/subscription/views/my_plan_list.dart';
 import 'package:job/src/features1/subscription/views/subscription_list.dart';
 
@@ -103,25 +104,46 @@ class _ProviderDrawerState extends State<ProviderDrawer> {
               ],
             ),
           ),
+          // TextButton(
+          //   onPressed: () async {
+          //     widget.onTap();
+          //     // _scaffoldKey.currentState?.openEndDrawer();
+          //     Nav.to(context, MyPlanList());
+          //   },
+          //   child: const Row(
+          //     mainAxisSize: MainAxisSize.max,
+          //     children: <Widget>[
+          //       Icon(
+          //         Icons.library_add_check_outlined,
+          //         color: Colors.black,
+          //       ),
+          //       SizedBox(width: 8), // Add some spacing between icon and text
+          //       Text(
+          //         'My plans',
+          //         style: TextStyle(color: Colors.black),
+          //       ),
+          //     ],
+          //   ),
+          // ),
+
           TextButton(
             onPressed: () async {
               widget.onTap();
               // _scaffoldKey.currentState?.openEndDrawer();
-              Nav.to(context, MyPlanList());
-
-              // Handle logout logic here
-              print('Logout pressed');
+              Nav.to(context, const MyPost());
             },
-            child: const Row(
+            child: Row(
               mainAxisSize: MainAxisSize.max,
               children: <Widget>[
-                Icon(
-                  Icons.library_add_check_outlined,
+                Image.asset(
+                  'assets/icons/Work.png',
                   color: Colors.black,
+                  height: 25,
                 ),
-                SizedBox(width: 8), // Add some spacing between icon and text
-                Text(
-                  'My plans',
+                const SizedBox(
+                    width: 8), // Add some spacing between icon and text
+                const Text(
+                  'My Posts',
                   style: TextStyle(color: Colors.black),
                 ),
               ],
@@ -177,7 +199,15 @@ class _ProviderDrawerState extends State<ProviderDrawer> {
                 ),
               ],
             ),
-          )
+          ),
+          const SizedBox(height: 10),
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 15),
+            child: Text(
+              'VERSION 1.0.1',
+              style: TextStyle(color: Colors.grey, fontSize: 12),
+            ),
+          ),
         ],
       ),
     );

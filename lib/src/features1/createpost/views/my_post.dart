@@ -95,21 +95,21 @@ class _MyPostState extends State<MyPost> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // appBar: AppBar(
-      //   centerTitle: true,
-      //   automaticallyImplyLeading: false,
-      //   backgroundColor: AppTheme.primary,
-      //   title: const Text("My Post",
-      //       style: TextStyle(color: AppTheme.white, fontSize: 18)),
-      //   leading: IconButton(
-      //       onPressed: () {
-      //         Nav.back(context);
-      //       },
-      //       icon: const Icon(
-      //         Icons.arrow_back_ios_new,
-      //         color: AppTheme.white,
-      //       )),
-      // ),
+      appBar: AppBar(
+        centerTitle: true,
+        automaticallyImplyLeading: false,
+        backgroundColor: AppTheme.primary,
+        title: const Text("My Post",
+            style: TextStyle(color: AppTheme.white, fontSize: 18)),
+        leading: IconButton(
+            onPressed: () {
+              Nav.back(context);
+            },
+            icon: const Icon(
+              Icons.arrow_back_ios_new,
+              color: AppTheme.white,
+            )),
+      ),
       body: !isLoading
           ? jobList.length != 0
               ? ListView.builder(

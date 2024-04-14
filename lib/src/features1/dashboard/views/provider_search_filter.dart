@@ -1,10 +1,10 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:job/src/core/utils/app_loader.dart';
 import 'package:job/src/core/utils/app_theme.dart';
 import 'package:job/src/core/utils/local_storage.dart';
 import 'package:job/src/core/utils/navigation.dart';
+import 'package:job/src/core/utils/snackbar.dart';
 import 'package:job/src/features1/dashboard/provider_dashboard_api.dart';
 import 'package:job/src/features1/dashboard/views/latest_profile.dart';
 
@@ -32,7 +32,6 @@ class _ProviderSearchState extends State<ProviderSearch> {
 
   @override
   void initState() {
-    // TODO: implement initState
     initilize([], "");
     scrollEvent();
     super.initState();
@@ -374,171 +373,171 @@ class _ProviderSearchState extends State<ProviderSearch> {
                   })
               : SizedBox(
                   height: screenHeight * 0.5,
-                  child: const Center(child: Text("No List")))
+                  child: const Center(child: Text("No job seekers found")))
           : ShimmerLoader(type: ""),
     );
   }
 }
 
-class FilterSelectionScreen extends StatefulWidget {
-  final List filters;
-  final Map selectedFilters;
-  final Function(Map selectedFilters) onFiltersSelected;
+// class FilterSelectionScreen extends StatefulWidget {
+//   final List filters;
+//   final Map selectedFilters;
+//   final Function(Map selectedFilters) onFiltersSelected;
 
-  FilterSelectionScreen({
-    required this.filters,
-    required this.selectedFilters,
-    required this.onFiltersSelected,
-  });
+//   FilterSelectionScreen({
+//     required this.filters,
+//     required this.selectedFilters,
+//     required this.onFiltersSelected,
+//   });
 
-  @override
-  _FilterSelectionScreenState createState() => _FilterSelectionScreenState();
-}
+//   @override
+//   _FilterSelectionScreenState createState() => _FilterSelectionScreenState();
+// }
 
-class _FilterSelectionScreenState extends State<FilterSelectionScreen> {
-  late Map selectedFilters;
+// class _FilterSelectionScreenState extends State<FilterSelectionScreen> {
+//   late Map selectedFilters;
 
-  @override
-  void initState() {
-    super.initState();
-    selectedFilters = Map.from(widget.selectedFilters);
-  }
+//   @override
+//   void initState() {
+//     super.initState();
+//     selectedFilters = Map.from(widget.selectedFilters);
+//   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      // appBar: AppBar(
-      //   title: Text('Filter Selection'),
-      // ),
-      body: Column(
-        children: [
-          const Padding(
-            padding: EdgeInsets.all(8.0),
-            child: Row(
-              children: [
-                Text("Filter",
-                    style:
-                        TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-              ],
-            ),
-          ),
-          Expanded(
-            child: ListView.builder(
-              itemCount: widget.filters.length,
-              itemBuilder: (context, index) {
-                return ExpansionTile(
-                  title: Text(widget.filters[index]["filter_name"] as String),
-                  children: [
-                    Wrap(
-                      children: (widget.filters[index]["filter_value"] as List)
-                          .map((filterValue) {
-                        final filterKey =
-                            widget.filters[index]["filter_key"] as String;
-                        final filterId = filterValue["id"] as int;
-                        final isSelected =
-                            selectedFilters.containsKey(filterKey) &&
-                                selectedFilters[filterKey]!.contains(filterId);
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       // appBar: AppBar(
+//       //   title: Text('Filter Selection'),
+//       // ),
+//       body: Column(
+//         children: [
+//           const Padding(
+//             padding: EdgeInsets.all(8.0),
+//             child: Row(
+//               children: [
+//                 Text("Filter",
+//                     style:
+//                         TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+//               ],
+//             ),
+//           ),
+//           Expanded(
+//             child: ListView.builder(
+//               itemCount: widget.filters.length,
+//               itemBuilder: (context, index) {
+//                 return ExpansionTile(
+//                   title: Text(widget.filters[index]["filter_name"] as String),
+//                   children: [
+//                     Wrap(
+//                       children: (widget.filters[index]["filter_value"] as List)
+//                           .map((filterValue) {
+//                         final filterKey =
+//                             widget.filters[index]["filter_key"] as String;
+//                         final filterId = filterValue["id"] as int;
+//                         final isSelected =
+//                             selectedFilters.containsKey(filterKey) &&
+//                                 selectedFilters[filterKey]!.contains(filterId);
 
-                        return CheckboxListTile(
-                          title: Text(filterValue["name"] as String),
-                          value: isSelected,
-                          onChanged: (bool? value) {
-                            setState(() {
-                              if (selectedFilters.containsKey(filterKey)) {
-                                if (value!) {
-                                  selectedFilters[filterKey]!.add(filterId);
-                                } else {
-                                  selectedFilters[filterKey]!.remove(filterId);
-                                }
-                              } else {
-                                selectedFilters[filterKey] = [filterId];
-                              }
-                            });
-                          },
-                        );
-                      }).toList(),
-                    ),
-                  ],
-                );
-              },
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  flex: 1,
-                  child: OutlinedButton(
-                    onPressed: () {
-                      // Handle button click
-                      Nav.back(context);
-                    },
-                    style: OutlinedButton.styleFrom(
-                      side: BorderSide(color: AppTheme.primary),
-                      backgroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(15.0),
-                      ),
-                    ),
-                    child: Text(
-                      "Cancel",
-                      style: TextStyle(
-                        color: AppTheme.primary,
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(
-                  width: 10,
-                ),
-                Expanded(
-                  flex: 1,
-                  child: OutlinedButton(
-                    onPressed: () {
-                      // Handle button click
-                      widget.onFiltersSelected(selectedFilters);
-                      Navigator.of(context).pop();
-                    },
-                    style: OutlinedButton.styleFrom(
-                      side: BorderSide(color: AppTheme.primary),
-                      backgroundColor: AppTheme.primary,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(15.0),
-                      ),
-                    ),
-                    child: const Text(
-                      "Continue",
-                      style: TextStyle(
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Platform.isIOS
-              ? const SizedBox(
-                  height: 20,
-                )
-              : const SizedBox(
-                  height: 0,
-                )
-        ],
-      ),
-      // floatingActionButton: FloatingActionButton(
-      //   onPressed: () {
-      //     widget.onFiltersSelected(selectedFilters);
-      //     Navigator.of(context)
-      //         .pop(); // Close the bottom sheet after submitting
-      //   },
-      //   child: Icon(Icons.check),
-      // ),
-    );
-  }
-}
+//                         return CheckboxListTile(
+//                           title: Text(filterValue["name"] as String),
+//                           value: isSelected,
+//                           onChanged: (bool? value) {
+//                             setState(() {
+//                               if (selectedFilters.containsKey(filterKey)) {
+//                                 if (value!) {
+//                                   selectedFilters[filterKey]!.add(filterId);
+//                                 } else {
+//                                   selectedFilters[filterKey]!.remove(filterId);
+//                                 }
+//                               } else {
+//                                 selectedFilters[filterKey] = [filterId];
+//                               }
+//                             });
+//                           },
+//                         );
+//                       }).toList(),
+//                     ),
+//                   ],
+//                 );
+//               },
+//             ),
+//           ),
+//           Padding(
+//             padding: const EdgeInsets.all(8.0),
+//             child: Row(
+//               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//               children: [
+//                 Expanded(
+//                   flex: 1,
+//                   child: OutlinedButton(
+//                     onPressed: () {
+//                       // Handle button click
+//                       Nav.back(context);
+//                     },
+//                     style: OutlinedButton.styleFrom(
+//                       side: BorderSide(color: AppTheme.primary),
+//                       backgroundColor: Colors.white,
+//                       shape: RoundedRectangleBorder(
+//                         borderRadius: BorderRadius.circular(15.0),
+//                       ),
+//                     ),
+//                     child: Text(
+//                       "Cancel",
+//                       style: TextStyle(
+//                         color: AppTheme.primary,
+//                       ),
+//                     ),
+//                   ),
+//                 ),
+//                 const SizedBox(
+//                   width: 10,
+//                 ),
+//                 Expanded(
+//                   flex: 1,
+//                   child: OutlinedButton(
+//                     onPressed: () {
+//                       // Handle button click
+//                       widget.onFiltersSelected(selectedFilters);
+//                       Navigator.of(context).pop();
+//                     },
+//                     style: OutlinedButton.styleFrom(
+//                       side: BorderSide(color: AppTheme.primary),
+//                       backgroundColor: AppTheme.primary,
+//                       shape: RoundedRectangleBorder(
+//                         borderRadius: BorderRadius.circular(15.0),
+//                       ),
+//                     ),
+//                     child: const Text(
+//                       "Continue",
+//                       style: TextStyle(
+//                         color: Colors.white,
+//                       ),
+//                     ),
+//                   ),
+//                 ),
+//               ],
+//             ),
+//           ),
+//           Platform.isIOS
+//               ? const SizedBox(
+//                   height: 20,
+//                 )
+//               : const SizedBox(
+//                   height: 0,
+//                 )
+//         ],
+//       ),
+//       // floatingActionButton: FloatingActionButton(
+//       //   onPressed: () {
+//       //     widget.onFiltersSelected(selectedFilters);
+//       //     Navigator.of(context)
+//       //         .pop(); // Close the bottom sheet after submitting
+//       //   },
+//       //   child: Icon(Icons.check),
+//       // ),
+//     );
+//   }
+// }
 
 class FilterModal extends StatefulWidget {
   final List filters;
@@ -560,6 +559,14 @@ class _FilterModalState extends State<FilterModal> {
   String? selectedFilterName;
   String? selectedFilterKey;
 
+  TextEditingController _startController = TextEditingController();
+  TextEditingController _endController = TextEditingController();
+
+  List filteredExperience = [0, 10];
+
+  //initial Range Value
+  RangeValues _currentRangeValues = const RangeValues(0, 10);
+
   @override
   void initState() {
     super.initState();
@@ -574,6 +581,48 @@ class _FilterModalState extends State<FilterModal> {
             ? widget.filters[0]["filter_key"]
             : null
         : null;
+  }
+
+  Map expLimit = {};
+
+  filterByExperience() {
+    final filterValue = widget.filters.firstWhere((element) =>
+        element["filter_name"] == selectedFilterName)["filter_value"];
+
+    if (selectedFilters.containsKey(selectedFilterKey)) {
+      print(selectedFilters[selectedFilterKey]);
+      setState(() {
+        expLimit = filterValue;
+
+        _currentRangeValues = RangeValues(
+            double.parse(selectedFilters[selectedFilterKey][0].toString()),
+            double.parse(selectedFilters[selectedFilterKey][1].toString()));
+        _startController.text =
+            selectedFilters[selectedFilterKey][0].toString();
+        _endController.text = selectedFilters[selectedFilterKey][1].toString();
+        // _currentRangeValues = RangeValues(
+        //     double.parse(filterValue['min'].toString()),
+        //     double.parse(filterValue['max'].toString()));
+      });
+      return;
+    }
+
+    if (filterValue.runtimeType != List) {
+      print('hi');
+      setState(() {
+        expLimit = filterValue;
+        filteredExperience = [
+          int.parse(filterValue['min'].toString()),
+          int.parse(filterValue['max'].toString())
+        ];
+
+        _startController.text = filterValue['min'].toString();
+        _endController.text = filterValue['max'].toString();
+        _currentRangeValues = RangeValues(
+            double.parse(filterValue['min'].toString()),
+            double.parse(filterValue['max'].toString()));
+      });
+    }
   }
 
   @override
@@ -625,6 +674,11 @@ class _FilterModalState extends State<FilterModal> {
                           selectedFilterKey =
                               widget.filters[index]["filter_key"];
                         });
+
+                        if (widget.filters[index]["filter_key"] ==
+                            'exp_years') {
+                          filterByExperience();
+                        }
                       },
                       child: Container(
                         height: 50,
@@ -673,44 +727,198 @@ class _FilterModalState extends State<FilterModal> {
                           top: BorderSide(
                               width: 1, color: AppTheme.TextBoldLite))),
                   child: selectedFilterName != null
-                      ? ListView.builder(
-                          itemCount: widget.filters
-                              .firstWhere((element) =>
-                                  element["filter_name"] ==
-                                  selectedFilterName)["filter_value"]
-                              .length,
-                          itemBuilder: (context, index) {
-                            final filterValue = widget.filters.firstWhere(
-                                (element) =>
-                                    element["filter_name"] ==
-                                    selectedFilterName)["filter_value"][index];
-                            // final filterKey = selectedFilterName!;
-                            final filterKey = selectedFilterKey;
-                            final filterId = filterValue["id"] as int;
-                            final isSelected = selectedFilters
-                                    .containsKey(filterKey) &&
-                                selectedFilters[filterKey]!.contains(filterId);
+                      ? selectedFilterKey == 'exp_years'
+                          ? Padding(
+                              padding: const EdgeInsets.all(10),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Text(
+                                    'Years',
+                                    style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.all(10),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        SizedBox(
+                                          // width: 120,
+                                          width: screenWidth * 0.2,
+                                          child: TextFormField(
+                                            controller: _startController,
+                                            keyboardType: TextInputType.number,
+                                            onEditingComplete: () {
+                                              setState(() {
+                                                _startController.text =
+                                                    _currentRangeValues.start
+                                                        .toString();
+                                              });
+                                            },
+                                            onChanged: (text) {
+                                              // Update the range slider when the text changes
+                                              double startValue =
+                                                  double.tryParse(text) ??
+                                                      _currentRangeValues.start;
 
-                            return CheckboxListTile(
-                              title: Text(filterValue["name"] as String),
-                              value: isSelected,
-                              onChanged: (bool? value) {
-                                setState(() {
-                                  if (selectedFilters.containsKey(filterKey)) {
-                                    if (value!) {
-                                      selectedFilters[filterKey]!.add(filterId);
-                                    } else {
-                                      selectedFilters[filterKey]!
-                                          .remove(filterId);
-                                    }
-                                  } else {
-                                    selectedFilters[filterKey] = [filterId];
-                                  }
-                                });
+                                              setState(() {
+                                                if (startValue <
+                                                    _currentRangeValues.end) {
+                                                  _currentRangeValues =
+                                                      RangeValues(
+                                                          startValue,
+                                                          _currentRangeValues
+                                                              .end);
+                                                } else {
+                                                  Snackbar.show(
+                                                      "Please check end value",
+                                                      Colors.black);
+                                                  setState(() {
+                                                    _startController.text =
+                                                        _currentRangeValues
+                                                            .start
+                                                            .toInt()
+                                                            .toString();
+                                                  });
+                                                }
+                                              });
+                                            },
+                                          ),
+                                        ),
+                                        const Text("to"),
+                                        SizedBox(
+                                          width: screenWidth * 0.2,
+                                          child: TextFormField(
+                                            controller: _endController,
+                                            keyboardType: TextInputType.number,
+                                            onChanged: (text) {
+                                              // Update the range slider when the text changes
+
+                                              double endValue =
+                                                  double.tryParse(text) ??
+                                                      _currentRangeValues.end;
+                                              setState(() {
+                                                if (endValue >
+                                                    _currentRangeValues.start) {
+                                                  _currentRangeValues =
+                                                      RangeValues(
+                                                          _currentRangeValues
+                                                              .start,
+                                                          endValue);
+                                                } else {
+                                                  Snackbar.show(
+                                                      "Please Check to from value",
+                                                      Colors.black);
+                                                  // _endController.text =
+                                                  //     _currentRangeValues.end.toInt().toString();
+                                                }
+                                              });
+                                            },
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  RangeSlider(
+                                    values: _currentRangeValues,
+                                    min: double.parse(
+                                        expLimit['min']?.toString() ?? '0'),
+                                    max: double.parse(
+                                        expLimit['max']?.toString() ?? '10'),
+                                    divisions: expLimit['max'] ?? 10,
+                                    labels: RangeLabels(
+                                      _currentRangeValues.start
+                                          .round()
+                                          .toString(),
+                                      _currentRangeValues.end
+                                          .round()
+                                          .toString(),
+                                    ),
+                                    onChanged: (RangeValues values) {
+                                      setState(() {
+                                        _currentRangeValues = values;
+                                        _startController.text =
+                                            _currentRangeValues.start
+                                                .round()
+                                                .toString();
+                                        _endController.text =
+                                            _currentRangeValues.end
+                                                .round()
+                                                .toString();
+
+                                        filteredExperience = [
+                                          int.parse(_startController.text),
+                                          int.parse(_endController.text)
+                                        ];
+
+                                        setState(() {
+                                          if (selectedFilters
+                                              .containsKey('exp_years')) {
+                                            print('dkjflk');
+                                            selectedFilters['exp_years'] =
+                                                filteredExperience;
+                                            print(selectedFilters);
+                                          } else {
+                                            print('ggggg');
+                                            selectedFilters['exp_years'] =
+                                                filteredExperience;
+                                          }
+                                        });
+                                      });
+                                    },
+                                  ),
+                                ],
+                              ),
+                            )
+                          : ListView.builder(
+                              itemCount: widget.filters
+                                  .firstWhere((element) =>
+                                      element["filter_name"] ==
+                                      selectedFilterName)["filter_value"]
+                                  .length,
+                              itemBuilder: (context, index) {
+                                final filterValue = widget.filters.firstWhere(
+                                        (element) =>
+                                            element["filter_name"] ==
+                                            selectedFilterName)["filter_value"]
+                                    [index];
+
+                                // final filterKey = selectedFilterName!;
+                                final filterKey = selectedFilterKey;
+                                final filterId = filterValue["id"] as int;
+                                final isSelected =
+                                    selectedFilters.containsKey(filterKey) &&
+                                        selectedFilters[filterKey]!
+                                            .contains(filterId);
+
+                                return CheckboxListTile(
+                                  title: Text(filterValue["name"] as String),
+                                  value: isSelected,
+                                  onChanged: (bool? value) {
+                                    setState(() {
+                                      if (selectedFilters
+                                          .containsKey(filterKey)) {
+                                        if (value!) {
+                                          selectedFilters[filterKey]!
+                                              .add(filterId);
+                                          print(selectedFilters);
+                                        } else {
+                                          selectedFilters[filterKey]!
+                                              .remove(filterId);
+                                        }
+                                      } else {
+                                        print('helo');
+                                        selectedFilters[filterKey] = [filterId];
+                                        print(selectedFilters[filterKey]);
+                                      }
+                                    });
+                                  },
+                                );
                               },
-                            );
-                          },
-                        )
+                            )
                       : SizedBox.shrink(),
                 ),
               ),

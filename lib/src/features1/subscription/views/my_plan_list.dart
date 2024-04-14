@@ -49,6 +49,7 @@ class _MyPlanListState extends State<MyPlanList> {
 
     var get_list = await SubscriptionApi.getPackagePurchaseList(context,
         UserResponse['data']['id'], page_no, UserResponse['data']['api_token']);
+    print(get_list.data);
 
     if (get_list.success) {
       if (get_list.data['status'].toString() == "1") {
@@ -77,42 +78,61 @@ class _MyPlanListState extends State<MyPlanList> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        automaticallyImplyLeading: false,
-        backgroundColor: AppTheme.primary,
-        title: const Text("Packages",
-            style: TextStyle(
-              color: AppTheme.white,
-            )),
-        leading: IconButton(
-            onPressed: () {
-              Nav.back(context);
-            },
-            icon: const Icon(
-              Icons.arrow_back_ios_new,
-              color: AppTheme.white,
-            )),
-      ),
+      // appBar: AppBar(
+      //   centerTitle: true,
+      //   automaticallyImplyLeading: false,
+      //   backgroundColor: AppTheme.primary,
+      //   title: const Text("Packages",
+      //       style: TextStyle(
+      //         color: AppTheme.white,
+      //       )),
+      //   leading: IconButton(
+      //       onPressed: () {
+      //         Nav.back(context);
+      //       },
+      //       icon: const Icon(
+      //         Icons.arrow_back_ios_new,
+      //         color: AppTheme.white,
+      //       )),
+      // ),
       body: !isLoading
           ? list.isNotEmpty
-              ? ListView.builder(
-                  itemCount: list.length,
-                  itemBuilder: (context, index) {
-                    // final data = list[index];
+              ? SingleChildScrollView(
+                  controller: controller,
+                  child: Column(
+                    children: [
+                      ListView.builder(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount: list.length,
+                        itemBuilder: (context, index) {
+                          // final data = list[index];
 
-                    return InkWell(
-                      splashColor: Colors.transparent,
-                      highlightColor: Colors.transparent,
-                      onTap: () {
-                        print(list[index]['downloaded_cvs']);
-                      },
-                      child: Subt(
-                        package: list[index],
-                        index: index,
+                          return InkWell(
+                            splashColor: Colors.transparent,
+                            highlightColor: Colors.transparent,
+                            onTap: () {
+                              print(list[index]['downloaded_cvs']);
+                            },
+                            child: Subt(
+                              package: list[index],
+                              index: index,
+                            ),
+                          );
+                        },
                       ),
-                    );
-                  },
+                      page_loading
+                          ? const Padding(
+                              padding: EdgeInsets.all(5),
+                              child: SizedBox(
+                                  height: 10,
+                                  width: 10,
+                                  child: CircularProgressIndicator()))
+                          : const SizedBox(
+                              height: 0,
+                            )
+                    ],
+                  ),
                 )
               : const Center(child: Text("No list"))
           : SingleChildScrollView(child: ShimmerLoader(type: "")),
@@ -608,9 +628,14 @@ class _SubtState extends State<Subt> {
     var storePath = await getPath();
     var filePaths = '$storePath/$fileName';
     try {
-      await Dio().download(link, filePaths);
-
-      OpenFile.open(filePath);
+      final result = await Dio().download(link, filePaths);
+      if (result.statusCode == 200) {
+        OpenFile.open(filePath);
+      } else {
+        setState(() {
+          dowloading = false;
+        });
+      }
     } catch (e) {
       print(e);
       setState(() {
@@ -1014,12 +1039,6 @@ class _SubtState extends State<Subt> {
                                   });
                                   await checkFileExists();
                                   download(widget.package['is_invoice'] ?? '');
-                                  // if (Platform.isAndroid) {
-                                  //   download(widget.package['is_invoice']);
-                                  // } else {
-                                  //   download(widget.package['is_invoice']);
-                                  //   // checkPermission();
-                                  // }
                                 },
                       icon: dowloading
                           ? const SizedBox(

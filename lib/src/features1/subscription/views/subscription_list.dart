@@ -31,7 +31,7 @@ class _SubscriptionListState extends State<SubscriptionList> {
     var get_list = await SubscriptionApi.getCompanyPackages(
         context, UserResponse['data']['id'], UserResponse['data']['api_token']);
 
-    print(get_list);
+    print(get_list.data);
 
     if (get_list.success) {
       if (get_list.data['status'].toString() == "1") {

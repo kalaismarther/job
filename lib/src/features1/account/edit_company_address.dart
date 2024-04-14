@@ -87,7 +87,10 @@ class _EditCompanyAddressState extends State<EditCompanyAddress> {
     });
     var UserResponse = PrefManager.read("UserResponse");
     var get_details = await AuthApi.getCompanyProfileDetails(
-        context, UserResponse['data']['id'], UserResponse['data']['api_token']);
+      context,
+      UserResponse['data']['id'],
+      UserResponse['data']['api_token'],
+    );
 
     print(get_details.data['data']);
 

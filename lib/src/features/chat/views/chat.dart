@@ -3,6 +3,8 @@ import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:get/get_navigation/get_navigation.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:job/app.dart';
@@ -30,7 +32,14 @@ class _ChatState extends State<Chat> {
 
   @override
   void initState() {
-    _getChatMessages();
+    initialize();
+    _getTesting();
+    super.initState();
+  }
+
+  initialize() async {
+    await _getChatMessages();
+    // checkingCurrentTime();
     _scrollController.addListener(() {
       if (_scrollController.position.maxScrollExtent ==
           _scrollController.offset) {
@@ -42,9 +51,10 @@ class _ChatState extends State<Chat> {
         }
       }
     });
-    _getTesting();
-    super.initState();
   }
+
+  //
+  bool showedAlert = false;
 
   _getTesting() {
     FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
@@ -107,6 +117,37 @@ class _ChatState extends State<Chat> {
           paginationLoader = false;
           isloading = false;
         });
+        if (result?['datemessage'] != null &&
+            result['datemessage'].toString().isNotEmpty &&
+            !showedAlert) {
+          showDialog(
+            context: context,
+            builder: (context) => SimpleDialog(
+              contentPadding: const EdgeInsets.all(25),
+              children: [
+                Text(
+                  result?['datemessage'] ?? '',
+                  style: const TextStyle(fontSize: 14),
+                ),
+                const SizedBox(
+                  height: 15,
+                ),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                      fixedSize: const Size(double.infinity, 47)),
+                  onPressed: () {
+                    Nav.back(context);
+                  },
+                  child: const Text('OK'),
+                )
+              ],
+            ),
+          );
+          setState(() {
+            showedAlert = true;
+          });
+        }
+
         print(chats[0]);
       }
     } catch (e) {
@@ -141,7 +182,6 @@ class _ChatState extends State<Chat> {
           paginationLoader = false;
           isloading = false;
         });
-        print(chats[0]);
       }
     } catch (e) {
       print(e);
@@ -169,6 +209,7 @@ class _ChatState extends State<Chat> {
   //       'x-api-key': UserResponse['data']['api_token']
   //     },
   //     body: json.encode(data),
+
   //   );
 
   //   if (response.statusCode == 200) {
@@ -247,6 +288,30 @@ class _ChatState extends State<Chat> {
       });
     }
   }
+
+  // void checkingCurrentTime() async {
+  //   final currentTime = DateTime.now();
+  //   print(currentTime.weekday);
+
+  //   String message =
+  //       'Our working Monday to Friday 9 to 6 clock.  Please drop your message we will get back to you at earliest.  You can call to customer service number +91 9740449939';
+
+  //   if (currentTime.weekday == 6 ||
+  //       currentTime.weekday == 7 ||
+  //       currentTime.hour < 9 ||
+  //       currentTime.hour > 18 ||
+  //       (currentTime.hour == 18 && currentTime.minute > 01)) {
+  //     // Get.rawSnackbar(
+  //     //   dismissDirection: DismissDirection.horizontal,
+  //     //   duration: Duration(days: 1),
+  //     //   backgroundColor: Colors.black,
+  //     //   snackPosition: SnackPosition.TOP,
+  //     //   message: message,
+  //     //   margin: EdgeInsets.only(top: 60),
+  //     // );
+
+  //   }
+  // }
 
   @override
   void dispose() {
@@ -399,18 +464,21 @@ class _ChatState extends State<Chat> {
                                                                           networkUrl:
                                                                               image));
                                                                 },
-                                                                child:
-                                                                    Container(
-                                                                  height: 200,
-                                                                  width: double
-                                                                      .infinity,
-                                                                  decoration:
-                                                                      BoxDecoration(
-                                                                    image: DecorationImage(
-                                                                        image:
-                                                                            imageProvider,
-                                                                        fit: BoxFit
-                                                                            .cover),
+                                                                child: Hero(
+                                                                  tag: image,
+                                                                  child:
+                                                                      Container(
+                                                                    height: 200,
+                                                                    width: double
+                                                                        .infinity,
+                                                                    decoration:
+                                                                        BoxDecoration(
+                                                                      image: DecorationImage(
+                                                                          image:
+                                                                              imageProvider,
+                                                                          fit: BoxFit
+                                                                              .cover),
+                                                                    ),
                                                                   ),
                                                                 ),
                                                               ),
@@ -451,8 +519,11 @@ class _ChatState extends State<Chat> {
                                                                         selectedImage),
                                                           );
                                                         },
-                                                        child: Image.file(
-                                                            File(image)))
+                                                        child: Hero(
+                                                          tag: selectedImage!,
+                                                          child: Image.file(
+                                                              File(image)),
+                                                        ))
                                                 : const SizedBox(
                                                     height: 0,
                                                   ),
@@ -460,14 +531,16 @@ class _ChatState extends State<Chat> {
                                               const SizedBox(
                                                 height: 10,
                                               ),
-                                            Text(
-                                              message,
-                                              style: const TextStyle(
-                                                height: 1.3,
-                                                color: Colors.black87,
+                                            if (message.isNotEmpty) ...[
+                                              Text(
+                                                message,
+                                                style: const TextStyle(
+                                                  height: 1.3,
+                                                  color: Colors.black87,
+                                                ),
+                                                softWrap: true,
                                               ),
-                                              softWrap: true,
-                                            ),
+                                            ]
                                           ],
                                         ),
                                       ),
@@ -598,8 +671,11 @@ class _ChatState extends State<Chat> {
                             ),
                           ),
                         TextFormField(
+                          keyboardType: TextInputType.multiline,
+                          maxLines: null,
                           controller: _msgController,
                           decoration: InputDecoration(
+                            constraints: BoxConstraints(maxHeight: 50),
                             hintText: selectedImage != null
                                 ? 'Add caption'
                                 : 'Enter your message',

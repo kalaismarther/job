@@ -239,7 +239,7 @@ class _MypostDetailsState extends State<MypostDetails> {
                                                 StackTrace? stackTrace) {
                                       // Handle the error here
                                       return const Center(
-                                        child: Text('UnSupported Image'),
+                                        child: Icon(Icons.image_not_supported),
                                       );
                                     }),
                                   ),

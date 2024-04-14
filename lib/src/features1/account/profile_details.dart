@@ -41,13 +41,11 @@ class _ProfileDetailsState extends State<ProfileDetails> {
     {"id": "2", "status": "Reviewed"},
     {"id": "3", "status": "HR Interview"},
     {"id": "4", "status": "Interview"},
-    {"id": "5", "status": "Accepted"},
+    {"id": "5", "status": "Sortlisted"},
     {"id": "6", "status": "Rejected"},
   ];
   @override
   void initState() {
-    // TODO: implement initState
-
     print(widget.applied_user_id);
     print(widget.job_id);
     print(widget.jobs_applied_id);

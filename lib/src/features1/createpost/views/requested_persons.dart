@@ -86,7 +86,7 @@ class _RequestedPersonsState extends State<RequestedPersons> {
     {"id": "2", "status": "Reviewed"},
     {"id": "3", "status": "HR Interview"},
     {"id": "4", "status": "Interview"},
-    {"id": "5", "status": "Accepted"},
+    {"id": "5", "status": "Sortlisted"},
     {"id": "6", "status": "Rejected"},
   ];
 
@@ -106,9 +106,6 @@ class _RequestedPersonsState extends State<RequestedPersons> {
         UserResponse['data']['id'],
         widget.jobId,
         UserResponse['data']['api_token']);
-    print(widget.jobId);
-    print(UserResponse['data']['id']);
-    print(UserResponse['data']['api_token']);
 
     if (result.success) {
       if (type == 'filter') {
@@ -117,7 +114,7 @@ class _RequestedPersonsState extends State<RequestedPersons> {
               .where((element) =>
                   element['status'].toString() == selectedFilter!['id'])
               .toList();
-          ;
+
           // value = result.data['data'];
         });
       } else {
@@ -377,7 +374,7 @@ class _RequestedPersonsState extends State<RequestedPersons> {
                                                           FontWeight.bold),
                                                 ),
                                                 Text(
-                                                  'status : ${requestedSeekers[index]?['display_status'] ?? ""}',
+                                                  'Status : ${requestedSeekers[index]?['display_status'] ?? ""}',
                                                   style: const TextStyle(
                                                       color: Colors.grey,
                                                       fontSize: 12),

@@ -38,12 +38,15 @@ class _ImagePreviewScreenState extends State<ImagePreviewScreen> {
       body: widget.networkUrl != null
           ? CachedNetworkImage(
               imageUrl: widget.networkUrl!,
-              imageBuilder: (context, imageProvider) => Container(
-                alignment: Alignment.center,
-                child: Center(
-                  child: Container(
-                    decoration: BoxDecoration(
-                      image: DecorationImage(image: imageProvider),
+              imageBuilder: (context, imageProvider) => Hero(
+                tag: widget.networkUrl!,
+                child: Container(
+                  alignment: Alignment.center,
+                  child: Center(
+                    child: Container(
+                      decoration: BoxDecoration(
+                        image: DecorationImage(image: imageProvider),
+                      ),
                     ),
                   ),
                 ),
@@ -62,8 +65,11 @@ class _ImagePreviewScreenState extends State<ImagePreviewScreen> {
               ),
             )
           : Center(
-              child: Image.file(
-                File(widget.fileImagePath!),
+              child: Hero(
+                tag: widget.fileImagePath!,
+                child: Image.file(
+                  File(widget.fileImagePath!),
+                ),
               ),
             ),
     );

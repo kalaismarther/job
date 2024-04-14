@@ -20,6 +20,7 @@ import 'package:job/src/features1/dashboard/views/provider_drawer.dart';
 import 'package:job/src/features1/dashboard/views/provider_notification.dart';
 import 'package:job/src/features1/dashboard/views/provider_search_filter.dart';
 import 'package:job/src/features1/request/views/request.dart';
+import 'package:job/src/features1/subscription/views/my_plan_list.dart';
 import 'package:job/src/features1/subscription/views/subscription_list.dart';
 
 class ProviderDashboard extends StatefulWidget {
@@ -158,7 +159,7 @@ class _ProviderDashboardState extends State<ProviderDashboard> {
                   centerTitle: true,
                   title: Text(
                     _currentIndex == 1
-                        ? "My Post"
+                        ? "My Plans"
                         : _currentIndex == 2
                             ? "Create Post"
                             : _currentIndex == 3
@@ -310,11 +311,10 @@ class _ProviderDashboardState extends State<ProviderDashboard> {
                     setState(() {
                       _currentIndex = value;
                     });
-                    // Scaffold.of(context).openDrawer();
                   },
                 )
               : _currentIndex == 1
-                  ? const MyPost()
+                  ? const MyPlanList()
                   : _currentIndex == 2
                       ? const JobInformation()
                       : _currentIndex == 3
@@ -339,8 +339,8 @@ class _ProviderHomeState extends State<ProviderHome> {
   List latestList = [];
   var _User_Response;
   var _User_Response1;
-  var notifiCount = "0";
-  int? activePlan;
+  var notifiCount = 0;
+  int activePlan = 0;
 
   @override
   void initState() {
@@ -357,16 +357,20 @@ class _ProviderHomeState extends State<ProviderHome> {
     var UserResponse = PrefManager.read("UserResponse");
     var UserResponse1 = PrefManager.read("update_profile1");
     PrefManager.writebool("home_load", true);
-    print(UserResponse1);
-    print("${UserResponse1} ===================>");
+    // print(UserResponse1);
+    // print("${UserResponse1} ===================>");
     var result = await ProviderDashboardApi.getProviderHomeContent(
         context, UserResponse['data']['id'], UserResponse['data']['api_token']);
 
     if (result.success) {
       if (result.data['status'].toString() == "1") {
-        if (result.data['data']?['cv_view_status'] == 1) {
+        if (result.data['data']?['cv_view_status']?.toString() == '1') {
           setState(() {
             activePlan = 1;
+          });
+        } else if (result.data['data']?['cv_view_status']?.toString() == '0') {
+          setState(() {
+            activePlan = 0;
           });
         }
         setState(() {
@@ -399,7 +403,7 @@ class _ProviderHomeState extends State<ProviderHome> {
     if (get_count.success) {
       if (get_count.data['status'].toString() == "1") {
         setState(() {
-          notifiCount = (get_count.data['data'] ?? "0").toString();
+          notifiCount = get_count.data['data'] ?? 0;
         });
       }
     }
@@ -411,7 +415,6 @@ class _ProviderHomeState extends State<ProviderHome> {
 
   @override
   Widget build(BuildContext context) {
-    // double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
     return SafeArea(
       child: Scaffold(
@@ -425,18 +428,6 @@ class _ProviderHomeState extends State<ProviderHome> {
             child: ProviderDrawer(onTap: () {
               _scaffoldKey.currentState?.openEndDrawer();
             })),
-        // floatingActionButton: FloatingActionButton(
-        //   onPressed: () {
-        //     Nav.to(context, const JobInformation());
-        //   },
-        //   child: const Icon(
-        //     Icons.add,
-        //     color: Colors.white,
-        //   ),
-        // ),
-        // floatingActionButtonLocation:
-        //     FloatingActionButtonLocation.miniCenterDocked,
-
         body: SingleChildScrollView(
           physics: const ClampingScrollPhysics(),
           child: Column(
@@ -569,31 +560,37 @@ class _ProviderHomeState extends State<ProviderHome> {
                                           // width: 25,
                                           child: Image.asset(
                                               "assets/icons/notification.png")),
-                                      notifiCount != "0"
+                                      notifiCount != 0
                                           ? Positioned(
-                                              top: 0,
-                                              right: notifiCount.length > 2
-                                                  ? -2.5
-                                                  : 0,
+                                              top: 3,
+                                              right: 0,
                                               child: Container(
                                                 padding:
-                                                    const EdgeInsets.all(5),
+                                                    const EdgeInsets.all(3),
                                                 decoration: const BoxDecoration(
                                                   color: Colors
                                                       .red, // You can customize the color
                                                   shape: BoxShape.circle,
                                                 ),
-                                                child: Text(
-                                                  notifiCount,
-                                                  style: TextStyle(
-                                                    color: Colors.white,
-                                                    fontSize:
-                                                        notifiCount.length > 2
-                                                            ? 6.5
-                                                            : 9,
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
-                                                ),
+                                                child: notifiCount > 9
+                                                    ? Text(
+                                                        '9+',
+                                                        style: TextStyle(
+                                                          color: Colors.white,
+                                                          fontSize: 7.5,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                        ),
+                                                      )
+                                                    : Text(
+                                                        notifiCount.toString(),
+                                                        style: TextStyle(
+                                                          color: Colors.white,
+                                                          fontSize: 9,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                        ),
+                                                      ),
                                               ),
                                             )
                                           : const SizedBox(
@@ -680,8 +677,8 @@ class _ProviderHomeState extends State<ProviderHome> {
                 ),
               ),
               !isLoading
-                  ? latestList.length > 0
-                      ? activePlan == 1
+                  ? activePlan == 1
+                      ? latestList.isNotEmpty
                           ? ListView.builder(
                               itemCount: latestList.length,
                               padding: const EdgeInsets.all(15.0),
@@ -717,10 +714,12 @@ class _ProviderHomeState extends State<ProviderHome> {
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
-                                        Text(latest_data['name'] ?? "",
-                                            style: const TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                            )),
+                                        Text(
+                                          latest_data['name'] ?? "",
+                                          style: const TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
                                         Row(
                                           children: [
                                             Image.asset(
@@ -759,30 +758,30 @@ class _ProviderHomeState extends State<ProviderHome> {
                                   ),
                                 );
                               })
-                          : Padding(
-                              padding: const EdgeInsets.only(top: 150),
-                              child: Center(
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Text(
-                                      'To view or download job seekers profile please upgrade your CV plan',
-                                      style: TextStyle(height: 2),
-                                      textAlign: TextAlign.center,
-                                    ),
-                                    const SizedBox(height: 15),
-                                    TextButton(
-                                        onPressed: () {
-                                          Nav.to(context, SubscriptionList());
-                                        },
-                                        child: Text('Upgrade'))
-                                  ],
+                          : SizedBox(
+                              height: screenHeight * 0.5,
+                              child: const Center(child: Text("No List")))
+                      : Padding(
+                          padding: const EdgeInsets.only(top: 150),
+                          child: Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  'To view or download job seekers profile please upgrade your CV plan',
+                                  style: TextStyle(height: 2),
+                                  textAlign: TextAlign.center,
                                 ),
-                              ),
-                            )
-                      : SizedBox(
-                          height: screenHeight * 0.5,
-                          child: const Center(child: Text("No List")))
+                                const SizedBox(height: 15),
+                                TextButton(
+                                    onPressed: () {
+                                      Nav.to(context, SubscriptionList());
+                                    },
+                                    child: Text('Upgrade'))
+                              ],
+                            ),
+                          ),
+                        )
                   : ShimmerLoader(type: "")
             ],
           ),

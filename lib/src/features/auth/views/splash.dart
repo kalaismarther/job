@@ -69,7 +69,22 @@ class _SplashState extends State<Splash> {
       });
       if (isLoggin == true) {
         if (type == "COMPANY" || type == "GUEST_COMPANY") {
-          Nav.off(context, ProviderDashboard());
+          var cvStatus = PrefManager.read('cv_view_status');
+
+          if (cvStatus.toString() == '0') {
+            PrefManager.writebool("home_load", false);
+            Nav.off(
+              context,
+              ProviderDashboard(
+                tabNo: 1,
+              ),
+            );
+          } else {
+            Nav.off(
+              context,
+              ProviderDashboard(),
+            );
+          }
         } else {
           Nav.off(
             context,

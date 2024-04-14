@@ -15,12 +15,6 @@ class ViewedCvScreen extends StatefulWidget {
 
 class _ViewedCvScreenState extends State<ViewedCvScreen> {
   @override
-  void initState() {
-    print(widget.packageInfo);
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -131,7 +125,7 @@ class _ViewedCvScreenState extends State<ViewedCvScreen> {
                                 borderRadius: BorderRadius.circular(5.0),
                               ),
                               child: Text(
-                                "See Application",
+                                "View Profile",
                                 style: TextStyle(
                                     fontSize: 10, color: AppTheme.primary),
                               ),
